@@ -451,7 +451,7 @@ with st.sidebar:
                 os.environ["HF_TOKEN"] = settings.huggingface_token
             st.rerun()
 
-        if st.button("💾 Save Keys to .env", use_container_width=True, key="save_keys_btn"):
+        if st.button("💾 Save Keys to .env", width="stretch", key="save_keys_btn"):
             _save_keys_to_env(settings.nvidia_api_key, settings.huggingface_token)
             st.success("Keys saved to .env!")
 
@@ -540,7 +540,7 @@ with st.sidebar:
 
     process_btn = st.button(
         "▶  Process Meeting",
-        use_container_width=True,
+        width="stretch",
         disabled=uploaded_file is None or st.session_state.processing,
         type="primary",
         key="process_btn",
@@ -946,7 +946,7 @@ elif st.session_state.result is not None:
                 "Timestamp": a.timestamp or "—",
                 "Confidence": f"{a.confidence:.0%}" if a.confidence else "—",
             } for a in summary.action_items])
-            st.dataframe(df, use_container_width=True, hide_index=True)
+            st.dataframe(df, width="stretch", hide_index=True)
 
             st.markdown("<br>**Details**", unsafe_allow_html=True)
             for a in summary.action_items:
@@ -977,7 +977,7 @@ elif st.session_state.result is not None:
     with tabs[5]:
         st.markdown("### 🔍 Search Transcript")
         query = st.text_input(
-            "",
+            "Search transcript",
             placeholder='Search for a word or phrase — e.g. "deployment" or "API"',
             key="search_q",
             label_visibility="collapsed",
@@ -1051,17 +1051,17 @@ elif st.session_state.result is not None:
             st.markdown("<div style='color:#00ff88; font-weight:600; margin-bottom:8px;'>JSON</div>Full structured data", unsafe_allow_html=True)
             st.download_button("⬇ Download JSON", data=to_json(result),
                                file_name=f"{result.meeting_id}.json", mime="application/json",
-                               use_container_width=True, key="dl_json")
+                               width="stretch", key="dl_json")
         with dc2:
             st.markdown("<div style='color:#00aaff; font-weight:600; margin-bottom:8px;'>TXT</div>Plain text report", unsafe_allow_html=True)
             st.download_button("⬇ Download TXT", data=to_txt(result),
                                file_name=f"{result.meeting_id}.txt", mime="text/plain",
-                               use_container_width=True, key="dl_txt")
+                               width="stretch", key="dl_txt")
         with dc3:
             st.markdown("<div style='color:#ff6b9d; font-weight:600; margin-bottom:8px;'>Markdown</div>Professional report", unsafe_allow_html=True)
             st.download_button("⬇ Download MD", data=to_markdown(result),
                                file_name=f"{result.meeting_id}.md", mime="text/markdown",
-                               use_container_width=True, key="dl_md")
+                               width="stretch", key="dl_md")
 
         st.divider()
         with st.expander("Preview Markdown Report"):

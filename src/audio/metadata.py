@@ -22,12 +22,11 @@ def extract_metadata(file_path: str | Path) -> AudioMetadata:
 
     Inspects the audio file header to retrieve duration, sample rate, channels,
     and format without reading full uncompressed audio samples into memory.
-    """
-    5. Return a populated AudioMetadata model.
 
     Parameters
     ----------
-    file_path : path to the audio file (any supported format)
+    file_path : str or Path
+        Path to the audio file (any supported format).
 
     Returns
     -------
@@ -35,8 +34,10 @@ def extract_metadata(file_path: str | Path) -> AudioMetadata:
 
     Raises
     ------
-    FileNotFoundError   if the file doesn't exist
-    ValueError          if the format is unsupported or file too large
+    FileNotFoundError
+        If the file does not exist.
+    ValueError
+        If the format is unsupported or the file exceeds the configured size limit.
     """
     path = Path(file_path).resolve()
 
