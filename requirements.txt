@@ -1,0 +1,47 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Meeting Intelligence System — Python Dependencies
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Core runtime ─────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0          # Load API keys / config from .env
+pydantic>=2.5.0               # Structured data models & validation
+pydantic-settings>=2.0.0      # Settings management with env-var support
+
+# ── Audio processing ─────────────────────────────────────────────────────────
+librosa>=0.10.1               # Audio loading, resampling, analysis
+soundfile>=0.12.1             # Fast WAV / FLAC I/O (libsndfile wrapper)
+pydub>=0.25.1                 # MP3 / M4A → WAV conversion (needs ffmpeg)
+numpy>=1.24.0                 # Numerical arrays (audio samples)
+
+# ── Speech recognition (ASR) ─────────────────────────────────────────────────
+faster-whisper>=1.0.0         # CTranslate2-based Whisper — much faster than OpenAI's
+# torch is required by faster-whisper; install the CPU wheel unless you have CUDA:
+# CPU:  pip install torch --index-url https://download.pytorch.org/whl/cpu
+# CUDA: pip install torch --index-url https://download.pytorch.org/whl/cu118
+torch>=2.0.0
+
+# ── Voice Activity Detection ──────────────────────────────────────────────────
+silero-vad>=5.1.2             # Lightweight Silero VAD (no cloud needed)
+# Note: silero-vad requires torch (already listed above)
+
+# ── Speaker diarization ───────────────────────────────────────────────────────
+# pyannote.audio requires a HuggingFace token (see .env.example)
+pyannote.audio>=3.1.0
+
+# ── LLM / AI analysis ────────────────────────────────────────────────────────
+# The OpenAI SDK is used for BOTH OpenAI and NVIDIA NIM APIs.
+# NVIDIA NIM is the PRIMARY provider (free tier at build.nvidia.com).
+# The SDK supports NVIDIA via custom base_url= — no extra package needed.
+openai>=1.30.0                # Works with NVIDIA NIM endpoint + Llama models
+
+# ── Evaluation ───────────────────────────────────────────────────────────────
+jiwer>=3.0.3                  # Word Error Rate (WER) calculation
+
+# ── Frontend ─────────────────────────────────────────────────────────────────
+streamlit>=1.35.0             # Web UI — zero HTML needed
+plotly>=5.20.0                # Interactive charts for the dashboard
+pandas>=2.0.0                 # DataFrame support for tables in Streamlit
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+pytest>=8.0.0
+pytest-mock>=3.12.0

@@ -1,0 +1,64 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .gitignore — Meeting Intelligence System
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Secrets (NEVER commit these) ────────────────────────────────────────────
+.env
+*.key
+*.pem
+
+# ── Python runtime ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+
+# ── Virtual environments ─────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+.venv*/
+
+# ── Data directories (can be large; track with Git LFS if needed) ────────────
+data/raw/
+data/processed/
+data/outputs/
+data/*.mp3
+data/*.wav
+data/*.m4a
+data/*.flac
+
+
+# ── Model cache ──────────────────────────────────────────────────────────────
+.cache/
+models/
+*.pt
+*.bin
+*.onnx
+*.ctranslate2/
+
+# ── IDE / Editor ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Pytest / coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# ── Streamlit ────────────────────────────────────────────────────────────────
+.streamlit/secrets.toml
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
