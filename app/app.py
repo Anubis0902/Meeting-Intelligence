@@ -1,15 +1,8 @@
-"""
-app/app.py
-─────────────────────────────────────────────────────────────────────────────
-Streamlit web dashboard for the Meeting Intelligence System.
-Theme: Pure black with neon green / cyan accents.
-
-Run with:
-    streamlit run app/app.py
-"""
+"""Streamlit web dashboard for the Meeting Intelligence System."""
 
 from __future__ import annotations
 
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -25,6 +18,35 @@ from src.config import settings
 
 configure_logging()
 settings.warn_if_keys_missing()
+
+
+def _save_keys_to_env(nvidia_key: str | None, hf_token: str | None) -> None:
+    """Helper to persist user-entered keys to .env file."""
+    env_path = Path(".env")
+    lines = []
+    if env_path.exists():
+        lines = env_path.read_text(encoding="utf-8").splitlines()
+
+    updated_nv = False
+    updated_hf = False
+    new_lines = []
+    for line in lines:
+        if line.startswith("NVIDIA_API_KEY="):
+            new_lines.append(f"NVIDIA_API_KEY={nvidia_key or ''}")
+            updated_nv = True
+        elif line.startswith("HUGGINGFACE_TOKEN="):
+            new_lines.append(f"HUGGINGFACE_TOKEN={hf_token or ''}")
+            updated_hf = True
+        else:
+            new_lines.append(line)
+
+    if not updated_nv and nvidia_key:
+        new_lines.append(f"NVIDIA_API_KEY={nvidia_key}")
+    if not updated_hf and hf_token:
+        new_lines.append(f"HUGGINGFACE_TOKEN={hf_token}")
+
+    env_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Page config
@@ -393,6 +415,46 @@ with st.sidebar:
         key="audio_uploader",
     )
 
+    # ── User API Key Configuration ───────────────────────────────────────────
+    with st.expander(
+        "🔑 Configure API Keys & Tokens",
+        expanded=not (bool(settings.nvidia_api_key) and bool(settings.huggingface_token)),
+    ):
+        st.caption("Provide API credentials here to unlock AI Analysis & Diarization without touching config files.")
+
+        user_nv_key = st.text_input(
+            "NVIDIA API Key",
+            value=st.session_state.get("user_nv_key", settings.nvidia_api_key or ""),
+            type="password",
+            placeholder="nvapi-...",
+            help="Free API key from https://build.nvidia.com",
+            key="cfg_nv_key",
+        )
+        if user_nv_key.strip() != (settings.nvidia_api_key or ""):
+            settings.nvidia_api_key = user_nv_key.strip() or None
+            st.session_state.user_nv_key = settings.nvidia_api_key or ""
+            st.rerun()
+
+        user_hf_token = st.text_input(
+            "HuggingFace Token",
+            value=st.session_state.get("user_hf_token", settings.huggingface_token or ""),
+            type="password",
+            placeholder="hf_...",
+            help="Token from https://huggingface.co/settings/tokens (requires accepting pyannote conditions)",
+            key="cfg_hf_token",
+        )
+        if user_hf_token.strip() != (settings.huggingface_token or ""):
+            settings.huggingface_token = user_hf_token.strip() or None
+            st.session_state.user_hf_token = settings.huggingface_token or ""
+            if settings.huggingface_token:
+                os.environ["HUGGINGFACE_TOKEN"] = settings.huggingface_token
+                os.environ["HF_TOKEN"] = settings.huggingface_token
+            st.rerun()
+
+        if st.button("💾 Save Keys to .env", use_container_width=True, key="save_keys_btn"):
+            _save_keys_to_env(settings.nvidia_api_key, settings.huggingface_token)
+            st.success("Keys saved to .env!")
+
     st.markdown("### ⚙️ Processing Options")
 
     language_options = {
@@ -468,11 +530,11 @@ with st.sidebar:
         st.markdown("✅ **OpenAI API** (fallback)")
     else:
         st.markdown("❌ **No LLM key set**")
-        st.caption("Add NVIDIA_API_KEY to .env")
+        st.caption("Enter in 'Configure API Keys' above or add to .env")
 
     st.markdown(f"{'✅' if dia_ok else '❌'} **HuggingFace** (diarization)")
     if not dia_ok:
-        st.caption("Add HUGGINGFACE_TOKEN to .env")
+        st.caption("Enter in 'Configure API Keys' above or add to .env")
 
     st.divider()
 
