@@ -1,36 +1,4 @@
-"""
-src/pipeline.py
-─────────────────────────────────────────────────────────────────────────────
-Speaker-transcript alignment and the main processing pipeline.
-
-ALIGNMENT ALGORITHM:
-─────────────────────
-ASR and diarization produce two independent timelines:
-
-  ASR timeline:         |──────────────────|  |──────────────|
-                        seg1 (0.0–4.2s)        seg2 (4.3–7.8s)
-
-  Diarization timeline: |──────────────────────────|  |──────────────|
-                        SPEAKER_00 (0.0–5.1s)          SPEAKER_01 (5.2–8.0s)
-
-For each ASR segment, we find which diarization segment it overlaps with MOST.
-
-Overlap is computed as the intersection length:
-  overlap = min(asr_end, dia_end) - max(asr_start, dia_start)
-
-The speaker with the maximum overlap wins.
-
-EDGE CASES:
-───────────
-• No overlap found: segment gets speaker=None (shown as "Unknown")
-• Multiple diarization speakers overlap equally: first one wins
-• ASR segment spans multiple speakers: assigned to the majority speaker
-
-This is a "winner takes all" approach.  It's simple, fast, and works well
-for typical meeting audio where speakers rarely overlap.
-
-The pipeline orchestrates all phases and measures timing for each.
-"""
+"""Speaker-transcript alignment and end-to-end meeting processing pipeline."""
 
 from __future__ import annotations
 

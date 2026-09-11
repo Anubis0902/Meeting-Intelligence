@@ -1,58 +1,4 @@
-"""
-src/diarization/speaker_diarization.py
-─────────────────────────────────────────────────────────────────────────────
-Speaker diarization using pyannote.audio.
-
-WHAT IS SPEAKER DIARIZATION?
-─────────────────────────────
-Diarization answers the question: "WHO spoke WHEN?"
-
-It does NOT transcribe speech — that's ASR's job.
-It does NOT identify speakers by name — it assigns anonymous labels
-(SPEAKER_00, SPEAKER_01, …) based on voice similarity.
-
-DIARIZATION vs SPEAKER IDENTIFICATION:
-────────────────────────────────────────
-• Diarization: "This segment was spoken by person A, this by person B."
-  Labels are arbitrary (SPEAKER_00, SPEAKER_01).
-
-• Speaker Identification: "This voice matches the profile for Alice."
-  Requires a pre-built voice database.
-
-We use diarization here.  Names can be assigned manually by the user.
-
-HOW PYANNOTE WORKS (high-level):
-─────────────────────────────────
-1. Voice Activity Detection: find speech vs non-speech frames.
-2. Speaker Embedding: encode each speech frame as a fixed-size vector
-   (x-vector or similar) capturing speaker characteristics.
-3. Clustering: group frames with similar embeddings → each cluster = one speaker.
-4. Postprocessing: merge adjacent same-speaker segments, remove very short ones.
-
-ALIGNMENT WITH ASR:
-────────────────────
-Pyannote and Whisper produce independent timelines.  The alignment step
-(src/diarization/speaker_diarization.py → align_speakers) maps each Whisper
-segment to the speaker who was talking during most of that segment.
-
-IMPORTANT LIMITATIONS:
-──────────────────────
-• Overlapping speech: when two people talk simultaneously, only one label
-  is assigned per time window.
-• Short utterances: very short turns (<1s) may be merged into the wrong speaker.
-• Similar voices: speakers with similar vocal characteristics may be merged.
-• Number of speakers: the model can estimate or be given the expected count.
-
-SETUP REQUIREMENTS:
-────────────────────
-pyannote.audio requires:
-1. A HuggingFace account.
-2. Accepting the model license at:
-   https://huggingface.co/pyannote/speaker-diarization-3.1
-3. A HuggingFace API token in HUGGINGFACE_TOKEN.
-
-The application degrades gracefully if diarization is unavailable.
-"""
+"""Speaker diarization pipeline using pyannote.audio."""
 
 from __future__ import annotations
 
@@ -192,17 +138,7 @@ def diarize_audio(
 
 
 def label_to_display_name(speaker_label: str) -> str:
-    """
-    Convert a pyannote speaker label to a user-friendly display name.
-
-    SPEAKER_00 → Speaker 1
-    SPEAKER_01 → Speaker 2
-
-    Why not use pyannote labels directly?
-    The raw labels are technical identifiers, not meaningful names.
-    Using "Speaker 1" is clearer in reports, while being honest that we
-    don't know the person's actual name.
-    """
+    """Convert raw technical label (e.g. SPEAKER_00) to human-readable 'Speaker 1'."""
     try:
         idx = int(speaker_label.split("_")[-1])
         return f"Speaker {idx + 1}"

@@ -1,42 +1,4 @@
-"""
-src/meeting/summarizer.py
-─────────────────────────────────────────────────────────────────────────────
-LLM-based meeting analysis: summary, key points, decisions, action items,
-topics, and open questions.
-
-WHY USE AN LLM AFTER TRANSCRIPTION?
-──────────────────────────────────────
-Whisper produces a word-for-word transcript.  An LLM understands *meaning*:
-it can:
-  • Identify what was actually decided (not just discussed)
-  • Extract concrete tasks with owners and deadlines
-  • Summarise a 10,000-word transcript into a readable paragraph
-  • Identify questions that were raised but not answered
-
-WHY STRUCTURED OUTPUTS?
-────────────────────────
-We instruct the LLM to return JSON matching our Pydantic schema.  Benefits:
-  1. Reliable downstream consumption — no fragile regex parsing.
-  2. Validation at parse time — if the LLM returns wrong types, Pydantic raises.
-  3. Null values are explicit — easier to distinguish "unknown" from "empty".
-
-HOW WE PREVENT HALLUCINATION:
-───────────────────────────────
-1. The system prompt explicitly prohibits inventing information.
-2. Null / "Not specified" is encouraged over a guess.
-3. Every action item and decision requires an evidence field (verbatim quote).
-4. Long transcripts are chunked and summarised in stages to avoid context
-   overflow pushing the model to guess.
-
-CHUNKING STRATEGY (Phase 9):
-──────────────────────────────
-If the transcript exceeds max_chunk_words (default 3000):
-  1. Split into overlapping chunks by word count.
-  2. Summarise each chunk independently.
-  3. Feed the chunk summaries to a final "reduce" call.
-
-This is a Map-Reduce summarisation pattern.
-"""
+"""LLM-based meeting analysis: summaries, key points, decisions, and action items."""
 
 from __future__ import annotations
 

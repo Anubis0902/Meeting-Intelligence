@@ -1,24 +1,4 @@
-"""
-src/audio/preprocessing.py
-─────────────────────────────────────────────────────────────────────────────
-Convert any supported audio format into the standard format required by Whisper:
-  • Mono (1 channel)
-  • 16,000 Hz sample rate
-  • 32-bit float NumPy array
-
-Why these values?
-─────────────────
-Whisper was trained on 16 kHz mono audio.  Feeding it audio at a different
-sample rate or with multiple channels will NOT cause a crash (the library
-handles resampling internally), but pre-converting here gives us:
-  1. A known-good format for all downstream steps (VAD, diarization).
-  2. Explicit control over resampling quality (librosa uses a high-quality
-     resampler by default).
-  3. A single place to change the target format if we switch models.
-
-Audio normalisation (peak normalisation to -1..1) is also applied so that
-very quiet or clipped recordings don't cause unexpected VAD or ASR behaviour.
-"""
+"""Audio preprocessing: format conversion, resampling to 16kHz mono, and normalization."""
 
 from __future__ import annotations
 
@@ -77,15 +57,9 @@ def load_audio(file_path: str | Path) -> tuple[np.ndarray, int]:
 
 def normalize_audio(samples: np.ndarray) -> np.ndarray:
     """
-    Apply peak normalisation so the loudest sample has magnitude 1.0.
+    Apply peak normalization so the maximum absolute sample amplitude is 1.0.
 
-    Why normalise?
-    ─────────────
-    • Whisper and VAD models perform better on consistently scaled audio.
-    • Avoids VAD treating a quiet recording as near-silence throughout.
-    • Does NOT change the relative loudness between speakers.
-
-    Skips normalisation if the audio is already silent to avoid division by zero.
+    Skips normalization if the audio is near-zero to prevent division by zero.
     """
     peak = np.abs(samples).max()
     if peak < 1e-6:

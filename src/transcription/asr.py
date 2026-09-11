@@ -1,41 +1,4 @@
-"""
-src/transcription/asr.py
-─────────────────────────────────────────────────────────────────────────────
-Speech-to-Text using faster-whisper.
-
-WHY FASTER-WHISPER?
-────────────────────
-faster-whisper is a reimplementation of OpenAI's Whisper model using
-CTranslate2, a C++ inference engine optimised for transformers:
-
-  • 2–4× faster than the original openai-whisper on CPU.
-  • Lower memory usage (supports int8 quantisation).
-  • Same accuracy as the original Whisper.
-  • Word-level timestamps available.
-
-HOW WHISPER WORKS (high-level):
-─────────────────────────────────
-1. Audio → 80-channel mel spectrogram (a 2D frequency-time representation).
-2. Encoder (transformer) encodes the spectrogram into rich audio embeddings.
-3. Decoder (transformer) autoregressively generates text tokens.
-4. Special tokens tell the model the task (transcribe vs. translate) and
-   the language.  If no language is given, Whisper runs a short detection
-   pass first.
-5. Timestamps are inserted as special tokens at the token level, then
-   aggregated to segment level.
-
-WHAT AFFECTS TRANSCRIPTION ACCURACY?
-───────────────────────────────────────
-• Model size: larger models are more accurate but slower.
-• Audio quality: background noise, echo, and reverberation hurt accuracy.
-• Accent / dialect: Whisper handles many accents well but can struggle with
-  strong regional accents.
-• Speaking rate: very fast speakers are harder to transcribe.
-• Overlapping speech: Whisper is not designed for overlapping speech.
-• Language: English accuracy is highest; Indian languages (Hindi, Marathi)
-  are supported but accuracy varies.
-• Code-switching: switching languages mid-sentence is challenging.
-"""
+"""Automatic Speech Recognition (ASR) engine using faster-whisper."""
 
 from __future__ import annotations
 

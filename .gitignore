@@ -62,3 +62,9 @@ build/
 # ── Logs ─────────────────────────────────────────────────────────────────────
 *.log
 logs/
+
+# ── Private Documentation / Guides ───────────────────────────────────────────
+ARCHITECTURE_DECISIONS.md
+WORKFLOW_AND_LEARNING_GUIDE.md
+INTERVIEW_PREP.md
+

@@ -1,11 +1,4 @@
-"""
-src/utils.py
-─────────────────────────────────────────────────────────────────────────────
-Shared utility functions used across the pipeline.
-
-Kept intentionally small — only genuinely reusable helpers live here.
-Business logic stays in the domain modules.
-"""
+"""Shared utility functions: logging, timing, serialization, and string formatting."""
 
 from __future__ import annotations
 
@@ -69,14 +62,7 @@ def timed(label: str) -> Generator[dict[str, float], None, None]:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generate_meeting_id(file_path: str | Path) -> str:
-    """
-    Generate a unique, deterministic meeting ID from the file path + timestamp.
-
-    Format: YYYYMMDD_HHMMSS_<6-char-hash>
-
-    Why include a hash?
-      Multiple uploads of the same filename in the same second get different IDs.
-    """
+    """Generate a unique, deterministic meeting ID formatted as YYYYMMDD_HHMMSS_<stem>_<hash>."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     content = f"{file_path}{timestamp}"
     short_hash = hashlib.md5(content.encode()).hexdigest()[:6]

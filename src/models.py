@@ -1,21 +1,4 @@
-"""
-src/models.py
-─────────────────────────────────────────────────────────────────────────────
-Pydantic data models shared across the entire pipeline.
-
-Why Pydantic?
-  • Every model is type-checked at runtime → impossible to pass a string where
-    a float is expected and silently corrupt downstream stages.
-  • Models are JSON-serialisable out of the box (.model_dump_json()).
-  • They act as living documentation — any developer can read these classes and
-    immediately understand the data contract between pipeline stages.
-
-Design principles:
-  • Keep models flat and easy to serialise.
-  • Optional fields default to None rather than empty strings → callers can
-    reliably distinguish "unknown" from "empty".
-  • No business logic in models — that lives in the processing modules.
-"""
+"""Pydantic data models and schemas for meeting pipeline artifacts."""
 
 from __future__ import annotations
 

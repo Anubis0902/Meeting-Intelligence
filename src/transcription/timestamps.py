@@ -1,25 +1,4 @@
-"""
-src/transcription/timestamps.py
-─────────────────────────────────────────────────────────────────────────────
-Clean and process raw ASR output.
-
-Raw Whisper output can contain:
-  • Leading/trailing whitespace in segment text.
-  • Very short segments that are noise or breath sounds.
-  • Repeated punctuation artifacts.
-  • Adjacent segments that could be merged for readability.
-
-WHY POST-PROCESS?
-──────────────────
-The raw ASR output is correct in terms of words — we must NOT change the
-semantic meaning.  But for readability and downstream LLM consumption, we:
-  1. Normalize whitespace (multiple spaces → single space).
-  2. Drop segments shorter than a minimum word count.
-  3. Optionally merge short consecutive segments from the same speaker.
-
-IMPORTANT: The original TranscriptionResult is preserved and saved separately.
-The cleaned version is what gets used downstream.
-"""
+"""Transcript formatting, cleaning, and timestamp normalization."""
 
 from __future__ import annotations
 

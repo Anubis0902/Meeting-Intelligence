@@ -1,15 +1,4 @@
-"""
-src/audio/metadata.py
-─────────────────────────────────────────────────────────────────────────────
-Extract and validate audio file metadata without modifying the file.
-
-Why a separate module?
-  Metadata extraction is a pure inspection step — it tells us what we have
-  before we do any processing.  Keeping it separate means:
-    • We can validate before spending time on heavy preprocessing.
-    • The information is logged once in a structured way.
-    • The AudioMetadata model travels downstream for display in the UI.
-"""
+"""Audio metadata extraction and file validation."""
 
 from __future__ import annotations
 
@@ -24,7 +13,6 @@ from src.config import settings
 
 logger = logging.getLogger(__name__)
 
-# ── Supported input formats ────────────────────────────────────────────────────
 SUPPORTED_EXTENSIONS = {".wav", ".mp3", ".m4a", ".flac", ".ogg", ".aac", ".wma"}
 
 
@@ -32,12 +20,9 @@ def extract_metadata(file_path: str | Path) -> AudioMetadata:
     """
     Extract metadata from an audio file and validate it against configured limits.
 
-    Steps
-    ─────
-    1. Check the file exists and has a supported extension.
-    2. Check file size against MAX_AUDIO_SIZE_MB.
-    3. Load the file header (not the full audio) to get sample rate + duration.
-    4. Warn if the meeting is unusually long.
+    Inspects the audio file header to retrieve duration, sample rate, channels,
+    and format without reading full uncompressed audio samples into memory.
+    """
     5. Return a populated AudioMetadata model.
 
     Parameters

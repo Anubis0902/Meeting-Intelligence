@@ -1,43 +1,4 @@
-"""
-src/audio/vad.py
-─────────────────────────────────────────────────────────────────────────────
-Voice Activity Detection (VAD) using Silero VAD.
-
-WHAT IS VAD?
-─────────────
-VAD is a binary classifier: for every short window of audio it decides
-"is a human speaking here?" (speech) or "is this silence/noise?" (non-speech).
-
-WHY USE VAD BEFORE TRANSCRIPTION?
-───────────────────────────────────
-1. Efficiency — Whisper must process every audio frame.  A 60-minute meeting
-   might contain 15 minutes of silence (gaps, thinking pauses, background
-   noise).  VAD lets us skip those frames entirely, reducing ASR computation.
-
-2. Accuracy — Long silence passages can confuse Whisper into hallucinating
-   repeated words or filler text.  VAD removes them before the model sees them.
-
-IMPORTANT CAVEATS:
-──────────────────
-• False positives (noise labelled as speech): rare environmental sounds, music,
-  or HVAC systems may get tagged as speech.  We keep minimum speech durations
-  to filter these out.
-
-• False negatives (speech labelled as silence): whispered speech or very quiet
-  segments may be dropped.  This is a real limitation — if you notice words
-  being missed, try lowering the VAD threshold.
-
-• VAD does NOT improve transcription quality on segments it passes through.
-  It only removes non-speech.
-
-IMPLEMENTATION CHOICE — Silero VAD:
-────────────────────────────────────
-Silero VAD is:
-  • Lightweight (~2 MB model, runs fast on CPU)
-  • Pre-trained, no tuning required
-  • Returns per-second probabilities → easy to threshold
-  • Apache 2.0 licensed
-"""
+"""Voice Activity Detection (VAD) module using Silero VAD."""
 
 from __future__ import annotations
 
